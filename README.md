@@ -1,19 +1,37 @@
 # Quarter-Mile Race Notebook (RWD vs AWD)
 
+## try it out: 
+https://rs38.github.io/quartermile/lab/index.html?path=quarter_mile_race.ipynb
+
+
 This project contains a Jupyter notebook that simulates a standing-start quarter-mile race (402.336 m) between configurable cars.
 
-- Notebook: `quarter_mile_race.ipynb`
+- Notebook: `quarter_mile_race.ipynb` – configuration, plots, and interactive exploration
+- Physics module: `quarter_mile_sim.py` – all reusable business logic (importable in CPython and JupyterLite / Pyodide WASM)
 - Main scenario: one ICE car vs one BEV car
 - Outputs: elapsed time, trap speed, acceleration behavior, wheel torque behavior, and race curves
+
+## Project Structure
+
+| File | Purpose |
+|---|---|
+| `quarter_mile_race.ipynb` | Interactive notebook – edit car specs, re-run cells, view plots |
+| `quarter_mile_sim.py` | Reusable physics engine – constants, schema adapter, simulator |
+
+`quarter_mile_sim.py` exposes:
+- **Constants**: `G`, `RHO_AIR`, `QUARTER_MILE_M`, `DEFAULT_DT`, `DRIVETRAIN_BASE`, `TIRE_COMPOUND_GRIP`
+- **Helpers**: `tire_grip_multiplier`, `interp_curve`, `wheel_rpm_from_speed`
+- **Adapter**: `make_car(name, spec)` – maps the typed `car_specs` schema to a runtime dict
+- **Simulator**: `simulate_quarter_mile(car, dt, distance_target)` – forward-Euler integration
 
 ## Notebook Structure
 
 `quarter_mile_race.ipynb` is organized into these cells:
 
 1. **Intro**: purpose and what can be customized
-2. **Constants**: gravity, air density, quarter-mile distance, timestep
+2. **Imports**: `numpy`, `matplotlib`, and `from quarter_mile_sim import …`
 3. **Configuration (`car_specs`)**: typed schema for each car
-4. **Model functions**: parsing schema + drivetrain/physics simulation
+4. **Build cars**: `cars = {name: make_car(name, spec) for …}`
 5. **Results summary**: ET/trap speed and winner
 6. **Acceleration + Wheel Torque vs Speed**
 7. **Power Curve (HP vs RPM)**
@@ -68,7 +86,8 @@ The configuration in Cell 3 follows this model:
 
 ### Runtime Adapter
 
-The function `make_car(...)` in Cell 4 maps this typed schema into the internal runtime structure used by the solver (`ice` or `motor` blocks, plus normalized drivetrain/tire fields).
+The function `make_car(name, spec)` in `quarter_mile_sim.py` maps this typed schema into the internal runtime structure used by the solver (`ice` or `motor` blocks, plus normalized drivetrain/tire fields).
+Cell 4 of the notebook calls it as `cars = {name: make_car(name, spec) for name, spec in car_specs.items()}`.
 
 ## Math and Physics Model
 
