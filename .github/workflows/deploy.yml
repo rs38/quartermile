@@ -29,7 +29,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build JupyterLite site
-        run: jupyter lite build --contents quarter_mile_race.ipynb --output-dir _site
+        run: jupyter lite build --contents quarter_mile_race.ipynb --contents quarter_mile_sim.py --output-dir _site
 
       - uses: actions/upload-pages-artifact@v3
         with:
