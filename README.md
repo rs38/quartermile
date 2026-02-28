@@ -1,15 +1,15 @@
-# Quarter-Mile Race Notebook (RWD vs AWD)
+# Quarter-Mile Race Notebook
 
-## try it out: 
+## Try it out
 https://rs38.github.io/quartermile/lab/index.html?path=quarter_mile_race.ipynb
 
 
-This project contains a Jupyter notebook that simulates a standing-start quarter-mile race (402.336 m) between configurable cars.
+This project contains a Jupyter notebook that simulates a standing-start quarter-mile race (402.336 m) between any two cars chosen from a built-in database.
 
-- Notebook: `quarter_mile_race.ipynb` – configuration, plots, and interactive exploration
+- Notebook: `quarter_mile_race.ipynb` – interactive form UI for selecting and customising cars, with live plots
 - Physics module: `quarter_mile_sim.py` – all reusable business logic (importable in CPython and JupyterLite / Pyodide WASM)
-- Main scenario: one ICE car vs one BEV car
-- Outputs: elapsed time, trap speed, acceleration behavior, wheel torque behavior, and race curves
+- Car database: 5 presets with identity-based names (Sport Coupe, Electric Sedan, Muscle Car, Electric Hypercar, Performance Wagon)
+- Outputs: elapsed time, trap speed, acceleration behaviour, wheel torque behaviour, and race curves
 
 ## Project Structure
 
@@ -28,15 +28,11 @@ This project contains a Jupyter notebook that simulates a standing-start quarter
 
 `quarter_mile_race.ipynb` is organized into these cells:
 
-1. **Intro**: purpose and what can be customized
+1. **Intro**: purpose and how to use the interactive form
 2. **Imports**: `numpy`, `matplotlib`, and `from quarter_mile_sim import …`
-3. **Configuration (`car_specs`)**: typed schema for each car
-4. **Build cars**: `cars = {name: make_car(name, spec) for …}`
-5. **Results summary**: ET/trap speed and winner
-6. **Acceleration + Wheel Torque vs Speed**
-7. **Power Curve (HP vs RPM)**
-8. **Race Plots**: distance-time and speed-time
-9. **Notes**
+3. **Car database (`CAR_DATABASE`)**: 5 preset cars with identity-based names, following the typed schema
+4. **Interactive form + Run Race**: `ipywidgets` form for picking and tweaking two cars, a **▶ Run Race** button, and an output area that renders the summary and all 3 charts (acceleration/torque, power curve, race plots)
+5. **Notes**
 
 ## Configuration Schema (Typed)
 
@@ -87,7 +83,7 @@ The configuration in Cell 3 follows this model:
 ### Runtime Adapter
 
 The function `make_car(name, spec)` in `quarter_mile_sim.py` maps this typed schema into the internal runtime structure used by the solver (`ice` or `motor` blocks, plus normalized drivetrain/tire fields).
-Cell 4 of the notebook calls it as `cars = {name: make_car(name, spec) for name, spec in car_specs.items()}`.
+The notebook's **Run Race** handler calls it as `cars = {n: make_car(n, s) for n, s in car_specs.items()}`.
 
 ## Math and Physics Model
 
@@ -221,9 +217,11 @@ HP \approx \frac{T(\text{Nm}) \cdot RPM}{7745}
 ## How to Use
 
 1. Open `quarter_mile_race.ipynb`.
-2. Edit `car_specs` in Cell 3.
-3. Run cells top-to-bottom.
-4. Compare ET/trap speed and plots.
+2. Run all cells (the form auto-runs a race on first execution).
+3. Select **Car 1** and **Car 2** from the preset dropdowns.
+4. Optionally adjust mass, tire compound/width, and ICE shift parameters using the form controls.
+5. Press **▶  Run Race** to re-run the simulation and update all charts.
+6. To add a custom car, extend `CAR_DATABASE` in cell 3.
 
 ## Notes for Future Extension
 
