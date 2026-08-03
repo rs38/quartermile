@@ -13,25 +13,30 @@ This project contains a Jupyter notebook that simulates a standing-start quarter
 
 ## Project Structure
 
-| File | Purpose |
+| Path | Purpose |
 |---|---|
-| `quarter_mile_race.ipynb` | Interactive notebook – edit car specs, re-run cells, view plots |
-| `quarter_mile_sim.py` | Reusable physics engine – constants, schema adapter, simulator |
+| `quarter_mile_race.ipynb` | Interactive notebook – select car presets, tweak parameters, run race |
+| `quarter_mile_cars.py` | Vehicle preset database (`CAR_DATABASE`) |
+| `quarter_mile_sim.py` | Physics engine facade (re-exports `sim` package for WASM/CPython compatibility) |
+| `quarter_mile_ui.py` | UI facade (re-exports `ui` package for WASM/CPython compatibility) |
+| `sim/` | Physics package (`constants.py`, `powertrain.py`, `adapter.py`, `engine.py`) |
+| `ui/` | Presentation package (`forms.py`, `plots.py`) |
+| `tests/` | Unit tests (`test_quarter_mile.py`) |
 
 `quarter_mile_sim.py` exposes:
-- **Constants**: `G`, `RHO_AIR`, `QUARTER_MILE_M`, `DEFAULT_DT`, `DRIVETRAIN_BASE`, `TIRE_COMPOUND_GRIP`
-- **Helpers**: `tire_grip_multiplier`, `interp_curve`, `wheel_rpm_from_speed`
+- **Constants**: `G`, `RHO_AIR`, `QUARTER_MILE_M`, `DEFAULT_DT`, `HP_TORQUE_FACTOR`, `DRIVETRAIN_BASE`, `TIRE_COMPOUND_GRIP`
+- **Helpers**: `tire_grip_multiplier`, `interp_curve`, `wheel_rpm_from_speed`, `get_gear_ratio`
 - **Adapter**: `make_car(name, spec)` – maps the typed `car_specs` schema to a runtime dict
-- **Simulator**: `simulate_quarter_mile(car, dt, distance_target)` – forward-Euler integration
+- **Simulator**: `simulate_quarter_mile(car, dt, distance_target)` – forward-Euler numerical solver
 
 ## Notebook Structure
 
 `quarter_mile_race.ipynb` is organized into these cells:
 
 1. **Intro**: purpose and how to use the interactive form
-2. **Imports**: `numpy`, `matplotlib`, and `from quarter_mile_sim import …`
-3. **Car database (`CAR_DATABASE`)**: 5 preset cars with identity-based names, following the typed schema
-4. **Interactive form + Run Race**: `ipywidgets` form for picking and tweaking two cars, a **▶ Run Race** button, and an output area that renders the summary and all 3 charts (acceleration/torque, power curve, race plots)
+2. **Imports**: `numpy`, `matplotlib`, `from quarter_mile_sim import …`, `from quarter_mile_ui import …`
+3. **Car database (`CAR_DATABASE`)**: imported from `quarter_mile_cars.py`
+4. **Interactive form + Run Race**: `ipywidgets` form for picking and tweaking two cars, a **▶ Run Race** button, and output area
 5. **Notes**
 
 ## Configuration Schema (Typed)
